@@ -1,0 +1,182 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Tables {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="py-4">
+{#      <nav aria-label="breadcrumb" class="d-none d-md-inline-block">#}
+{#          <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">#}
+{#              <li class="breadcrumb-item">#}
+{#                  <a href="#">#}
+{#                      <svg class="icon icon-xxs" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>#}
+{#                  </a>#}
+{#              </li>#}
+{#              <li class="breadcrumb-item"><a href="#">Tables</a></li>#}
+{#              <li class="breadcrumb-item active" aria-current="page">Bootstrap tables</li>#}
+{#          </ol>#}
+{#      </nav>#}
+      <div class="d-flex justify-content-between w-100 flex-wrap">
+          <div class="mb-3 mb-lg-0">
+              <h1 class="h4">Update Scraped Data</h1>
+          </div>
+          <div>
+
+          </div>
+      </div>
+  </div>
+
+  <div class="card border-0 shadow mb-4">
+      <div class="card-body">
+          <form action="{% url 'boldtv_update' data.id %}" method="POST" enctype="multipart/form-data">
+{#              <input name="csrfmiddlewaretoken" value="{{ csrftoken }}" type="hidden" />#}
+              {% csrf_token %}
+              <div class="col-lg-10 col-sm-10 offset-1">
+                  <div class="mb-4">
+                      <table class="table table-bordered">
+                          <tr><th>League</th><td>{{ data.league }}</td></tr>
+                          <tr><th>League Flag</th><td><img src="{{ data.league_img }}" alt=""> </td></tr>
+                          <tr><th>League link</th><td>{{ data.league_url }}</td></tr>
+                          <tr><th>Game</th><td>{{ data.game }}</td></tr>
+                          <tr><th>Match Link</th><td>{{ data.match_url }}</td></tr>
+                          <tr><th>Channel</th><td>{{ data.channel_title }}</td></tr>
+                          <tr><th>Channel Logo</th>
+                              <td>
+                                  {% if data.channel_img %}
+                                    <img height="50" src="{{ data.channel_img.url }}" alt="">
+                                  {% endif %}
+                                  <div class="mb-3">
+                                      <label for="formFile" class="form-label">Update channel logo</label>
+                                      <input class="form-control" type="file" id="formFile" name="channel_logo">
+                                  </div>
+                              </td>
+                          </tr>
+                          <tr><th>Match Time</th><td>{{ data.match_time }}</td></tr>
+                          <tr><th>Match Time</th><td>{{ data.match_date }}</td></tr>
+                      </table>
+                  </div>
+              </div>
+              <div class="col-lg-10 col-sm-10 offset-1">
+                  {% if bookmakers %}
+                    {% for bookmaker in bookmakers  %}
+                        <div class="row">
+                          <div class="col-md-12"><h5 class="border-bottom border-2 pb-2">Bookmaker {{forloop.counter}}</h5></div>
+                          <div class="col-md-8">
+                              <div class="mb-3">
+                                  <label for="formFile" class="form-label">Url</label>
+                                  <input disabled class="form-control" type="text" name="bookmaker[{{ forloop.counter }}][url]" value="{{ bookmaker.url }}">
+                              </div>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="row">
+                                  <div class="col-md-12 text-center mt-4 border-5 border-gray-50"><img src="{{ bookmaker.img.url }}" height="50" width="50" alt=""></div>
+
+                              </div>
+                          </div>
+                      </div>
+                    {% endfor %}
+                    {% for i in range %}
+                        <div class="row">
+                          <div class="col-md-12"><h5 class="border-bottom border-2 pb-2">Bookmaker {{forloop.counter|add:bookmakers.count}}</h5></div>
+                          <div class="col-md-6">
+                              <div class="mb-3">
+                                  <label for="formFile" class="form-label">Url</label>
+                                  <input class="form-control" type="text" name="bookmaker[{{forloop.counter|add:bookmakers.count}}][url]">
+                              </div>
+                          </div>
+                          <div class="col-md-6">
+                              <div class="mb-3">
+                                  <label for="formFile" class="form-label">Logo</label>
+                                  <input class="form-control" type="file" id="formFile" name="bookmaker[{{forloop.counter|add:bookmakers.count}}][logo]">
+                              </div>
+                          </div>
+                      </div>
+                    {% endfor %}
+                  {% else %}
+                  <div class="row">
+                      <div class="col-md-12">
+                          <h5 class="border-bottom border-2 pb-2">Bookmaker 1 </h5>
+                          <span><input class="set_default" type="checkbox" checked name="bookmaker[1][default]" value="1"> Unibet Sport</span>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="mb-3">
+                              <label for="formFile" class="form-label">Url</label>
+                              <input disabled class="form-control" type="text" name="bookmaker[1][url]">
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="mb-3">
+                              <label for="formFile" class="form-label">Logo</label>
+                              <input disabled class="form-control" type="file" id="formFile" name="bookmaker[1][logo]">
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-md-12">
+                          <h5 class="border-bottom border-2 pb-2">Bookmaker 2</h5>
+                          <span><input class="set_default" type="checkbox" checked name="bookmaker[2][default]" value="1"> Mr green sport</span>
+                      </div>
+
+                      <div class="col-md-6">
+                          <div class="mb-3">
+                              <label for="formFile" class="form-label">Url</label>
+                              <input disabled class="form-control" type="text" name="bookmaker[2][url]">
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="mb-3">
+                              <label for="formFile" class="form-label">Logo</label>
+                              <input disabled class="form-control" type="file" id="formFile" name="bookmaker[2][logo]">
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-md-12">
+                          <h5 class="border-bottom border-2 pb-2">Bookmaker 3</h5>
+                          <span><input class="set_default" type="checkbox" checked name="bookmaker[3][default]" value="1"> Comeon sport</span>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="mb-3">
+                              <label for="formFile" class="form-label">Url</label>
+                              <input disabled class="form-control" type="text" name="bookmaker[3][url]">
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="mb-3">
+                              <label for="formFile" class="form-label">Logo</label>
+                              <input disabled class="form-control" type="file" id="formFile" name="bookmaker[3][logo]">
+                          </div>
+                      </div>
+                  </div>
+                  {% endif %}
+                  <div class="row">
+                      <div class="col-md-12 text-center">
+                          <button type="submit" class="btn btn-success text-white">Update</button>
+                          <a href="/boldtv" class="btn btn-warning">Cancel</a>
+                      </div>
+                  </div>
+              </div>
+          </form>
+      </div>
+  </div>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        $('.set_default').click(function (){
+            if($(this).is(':checked')){
+                $(this).closest('.row').find('.form-control').attr('disabled','disabled');
+                $(this).closest('.row').find('.form-control').removeAttr('required');
+            }
+            else{
+                $(this).closest('.row').find('.form-control').removeAttr('disabled')
+                $(this).closest('.row').find('.form-control').attr('required')
+            }
+        });
+    </script>
+{% endblock javascripts %}
